@@ -29,7 +29,7 @@ async fn main() -> Result<(), Error> {
     let ref dispatcher =
         RouteDispatcher::new(Context { config }, Fallback).add_route("/match/{matchId}", GetMatch);
 
-    let handler_func_closure = move |request: Request| async move {
+    let handler = move |request: Request| async move {
         request.log();
         let response = match dispatcher
             .dispatch(&request, || -> Option<String> {
@@ -55,6 +55,6 @@ async fn main() -> Result<(), Error> {
         Ok(response)
     };
 
-    lambda_http::run(service_fn(handler_func_closure)).await?;
+    lambda_http::run(service_fn(handler)).await?;
     Ok(())
 }
